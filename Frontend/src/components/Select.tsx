@@ -1,29 +1,80 @@
-import styles from "../styles/select.module.css" 
-                    
+import { useEffect, useState } from "react"
+import styles from "../styles/select.module.css"
+
 
 type SelectOption = {
     label: string
-    value: any
+    value: string | number
+}
+
+type SingleSelectProps = {
+    multiple: false
+    value?: SelectOption
+    onChange: (value: SelectOption | undefined) => void
+}
+
+type MultipleSelectProps = {
+    multiple: true
+    value: SelectOption
+    onChange: (value: SelectOption[]) => void
 }
 
 type SelectProps = {
-    value?: SelectOption 
-    onChange: (value: SelectOption | undefined) => void
-    options: SelectOption[] 
-}
+    options: SelectOption[]
+} & (SingleSelectProps | MultipleSelectProps)
 
-export function Select({value, onChange, options}: SelectProps){
+export function Select({ multiple, value, onChange, options }: SelectProps) {
+    const [isOpen, setIsOpen] = useState(false)
+    const [highlightedIndex, setHighlightedIndex] = useState(0)
+
+
+    function clearOptions(){
+        multiple ? onChange([]) : onChange(undefined)
+    } 
+
+    function selectOption(option: SelectOption) {
+        if (option !== value) onChange(option)
+    }
+
+    function isOptionSelected(option: SelectOption){
+        return option === value
+    }
+
+    useEffect(() => {
+        if (isOpen) setHighlightedIndex(0)}, [isOpen])
+
+
     return (
-        <div tabIndex={0} className={styles.container}>
-        <span className={styles.value}>Value</span>
-        <button className={styles["clear-button"]}>&times;</button>
-        <div className={styles.divider}></div>
-        <div className={styles.caret}></div>
-        <ul className={styles.options}>
-            {options.map(option => (
-                <li key={option.label} className={styles.option}>{option.label}</li>
-            ))}
-        </ul>
+        <div
+            onBlur={() => setIsOpen(false)}
+            onClick={() => setIsOpen(prev => !prev)}
+            tabIndex={0} className={styles.container}
+        >
+            <span className={styles.value}>{value?.label}</span>
+            <button onClick={e => {
+                e.stopPropagation()
+                clearOptions()
+                }} className={styles["clear-button"]}>&times;</button>
+            <div className={styles.divider}></div>
+            <div className={styles.caret}></div>
+            <ul className={`${styles.options}} ${isOpen ? styles.show : ""}`}>
+                {options.map(option => (
+                    <li onClick={e => {
+                        e.stopPropagation()
+                        selectOption(option)
+                        setIsOpen(false)
+                        }} 
+                        onMouseEnter={() => setHighlightedIndex(index)}
+                        key={option.value} 
+                        className={`${styles.option} 
+                        ${isOptionSelected(option) ? styles.selected : ""}
+                        ${index === highlightedIndex ? styles.highlighted : ""}
+                        `}
+                        >
+                        {option.label}
+                    </li>
+                ))}
+            </ul>
         </div>
     )
 }
