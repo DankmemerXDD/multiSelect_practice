@@ -50,19 +50,23 @@
 }
 
 .options {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    max-height: 15em;
-    overflow-y: auto;
-    border: .05em solid #777;
-    border-radius: .25em;
-    width: 100%;
-    left: 0;
-    top: calc(100% + .25em);
-    background-color: white;
-    z-index: 100;
+  display: none;
+  position: absolute; 
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-height: 15em;
+  overflow-y: auto;
+  border: 0.05em solid #777;
+  border-radius: 0.25em;
+  width: 100%;
+  left: 0;
+  top: calc(100% + 0.25em);
+  background-color: white;
+  z-index: 100;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); 
 }
+
 
 .options.show {
     display: block;
@@ -74,11 +78,11 @@
 }
 
 .option.selected {
-    background-color: hsl(200, 100%, 70%);
+    background-color: hsl(240, 0%, 56%);
 }
 
 .option.highlighted {
-    background-color: aquamarine;
+    background-color: rgba(1, 6, 4, 0.868);
     color: white;
 }
 
